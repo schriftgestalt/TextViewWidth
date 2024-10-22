@@ -2,10 +2,11 @@
 
 from __future__ import division, print_function, unicode_literals
 import objc
-from GlyphsApp import *
-from GlyphsApp.plugins import *
+from GlyphsApp import Glyphs, UPDATEINTERFACE
+from GlyphsApp.plugins import PalettePlugin
 from vanilla import Window, EditText, Group, Slider
 import traceback
+
 
 class TextViewWidth (PalettePlugin):
 
@@ -20,16 +21,20 @@ class TextViewWidth (PalettePlugin):
 		height = M * 2.5
 		self.paletteView = Window((width, height))
 		self.paletteView.group = Group((0, 0, width, height))
-		self.paletteView.group.editText = EditText((M, 0, M * 5, M * 2),
-						callback=self.editTextCallback,
-						sizeStyle = 'small',
-						placeholder = 'None',
-						continuous = False)
-		self.paletteView.group.slider = Slider((M * 7, 0, -M, M * 2),
-						callback=self.sliderCallback,
-						minValue=1000,
-						maxValue=30000,
-						sizeStyle = 'small')
+		self.paletteView.group.editText = EditText(
+			(M, 0, M * 5, M * 2),
+			callback=self.editTextCallback,
+			sizeStyle='small',
+			placeholder='None',
+			continuous=False
+		)
+		self.paletteView.group.slider = Slider(
+			(M * 7, 0, -M, M * 2),
+			callback=self.sliderCallback,
+			minValue=1000,
+			maxValue=30000,
+			sizeStyle='small'
+		)
 		self.dialog = self.paletteView.group.getNSView()
 
 		# self.loadPreferences()
@@ -64,9 +69,9 @@ class TextViewWidth (PalettePlugin):
 			if userInput:
 				Glyphs.defaults["com.slobzheninov.textEditWidth"] = userInput
 			else:
-				del(Glyphs.defaults["com.slobzheninov.textEditWidth"])
+				del Glyphs.defaults["com.slobzheninov.textEditWidth"]
 		except:
-			print ("Could not save preferences")
+			print("Could not save preferences")
 			print(traceback.format_exc())
 
 	@objc.python_method
@@ -92,11 +97,9 @@ class TextViewWidth (PalettePlugin):
 	def updateWidth(self, font):
 		if not font:
 			return
-
 		userInput = self.loadPreferences()
 		if not userInput:
-			return 
-		
+			return
 		width = None
 
 		userInputSplitted = str(userInput).split(" ")
@@ -110,7 +113,7 @@ class TextViewWidth (PalettePlugin):
 				print('Text View Width plugin input error:\nGlyph %s not found' % userInputSplitted[1])
 				Glyphs.showMacroWindow()
 				return
-			
+
 			glyph = font.glyphs[userInputSplitted[1]]
 			times = float(userInputSplitted[0])
 			master = font.selectedFontMaster
@@ -119,7 +122,7 @@ class TextViewWidth (PalettePlugin):
 				print('Text View Width plugin input error:\nGlyph %s (%s) has 0 width' % (glyph.name, master.name))
 				Glyphs.showMacroWindow()
 				return
-			
+
 			width = times * width
 
 		else:
